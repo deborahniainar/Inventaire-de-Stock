@@ -1,0 +1,323 @@
+<template>
+  <header class="flex items-center justify-between bg-white shadow-md p-4">
+    <!-- Logo à gauche -->
+    <div class="flex items-center">
+      <img src="./Logo.png" alt="Logo" class="h-20 w-30">
+    </div>
+    
+    <!-- Titre au centre -->
+    <div class="flex-1 text-center">
+      <h1 class="text-3xl font-bold text-gray-800">Inventaire de Stock</h1>
+    </div>
+    
+    <!-- Espace vide à droite (pour équilibre) -->
+    <div class="w-12"></div>
+  </header>
+  <!-- Tableau -->
+  <main class="p-8 max-w-6xl mx-auto">
+    <!-- Dropdown Article -->
+    <div class="mb-4 relative inline-block">
+      <button 
+        @click="toggleDropdown" 
+        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition flex items-center gap-2"
+      >
+        Article
+        <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': dropdownOpen }" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      
+      <!-- Dropdown Menu -->
+      <div 
+        v-if="dropdownOpen" 
+        class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-10 border border-gray-200 max-h-96 overflow-y-auto"
+      >
+        <button
+          v-for="category in categories"
+          :key="category"
+          @click="selectCategory(category)"
+          class="w-full text-left px-4 py-3 hover:bg-blue-50 transition text-sm text-gray-700 hover:text-blue-600 border-b border-gray-100 last:border-b-0"
+          :class="{ 'bg-blue-50 text-blue-600 font-semibold': selectedCategory === category }"
+        >
+          {{ category }}
+        </button>
+        <button
+          v-if="selectedCategory"
+          @click="clearCategory"
+          class="w-full text-left px-4 py-3 hover:bg-red-50 transition text-sm text-red-600 font-semibold"
+        >
+          ✕ Effacer le filtre
+        </button>
+      </div>
+    </div>
+
+    <!-- Affichage de la catégorie sélectionnée -->
+    <div v-if="selectedCategory" class="mb-4 text-center">
+      <h2 class="text-xl font-semibold text-gray-800">
+        Article: <span class="text-blue-600">{{ selectedCategory }}</span>
+      </h2>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <table class="w-full">
+        <thead class="bg-gray-100 border-b">
+          <tr>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Code</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Désignation</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Marque</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Unité</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Inventaire</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Entrées</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Sorties</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Stock</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">E/S</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="article in articles" :key="article.id" class="border-b hover:bg-gray-50">
+            <td class="px-6 py-4 text-sm text-gray-800">{{ article.code }}</td>
+            <td class="px-6 py-4 text-sm text-gray-800">{{ article.designation }}</td>
+            <td class="px-6 py-4 text-sm text-gray-800">{{ article.marque }}</td>
+            <td class="px-6 py-4 text-sm text-gray-800">{{ article.unite }}</td>
+            <td class="px-6 py-4 text-sm text-gray-800">{{ article.inventaire }}</td>
+            <td class="px-6 py-4 text-sm text-green-600 font-semibold">{{ article.entrees }}</td>
+            <td class="px-6 py-4 text-sm text-red-600 font-semibold">{{ article.sorties }}</td>
+            <td class="px-6 py-4 text-sm text-green-600 font-semibold">{{ article.stock }}</td>
+            <td class="px-6 py-4 text-sm">
+              <button @click="editArticle(article.id)" class="text-yellow-500 hover:text-yellow-700 hover:scale-125 transition mr-3 text-lg" title="Éditer">✏️</button>
+              <button @click="deleteArticle(article.id)" class="text-red-500 hover:text-red-700 hover:scale-125 transition text-lg" title="Supprimer">🗑️</button>
+            </td>
+            <td class="px-6 py-4 text-sm text-center">
+              <button
+                @click="handleMovement(article.id)"
+                class="text-blue-500 hover:text-blue-700 hover:scale-125 transition-transform text-xl"
+                title="Enregistrer un mouvement"
+              >
+                ➜
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Boutons au centre -->
+    <div class="flex justify-center items-center gap-4 mt-8">
+      <button @click="openForm" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
+        ➕ Ajouter une designation
+      </button>
+      <button @click="exportToXLS" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
+        📊 Exporter en XLS
+      </button>
+    </div>
+  </main>
+
+  <!-- Composant Formulaire -->
+  <ArticleForm :isOpen="showForm" @submit="addArticle" @close="closeForm" />
+
+  <!-- Composant Édition -->
+  <EditArticleForm :isOpen="showEditForm" :article="editingArticle" @submit="updateArticle" @close="closeEditForm" />
+
+  <!-- Composant Confirmation suppression -->
+  <ConfirmDialog :isOpen="showConfirmDelete" message="Êtes-vous sûr de vouloir supprimer cet article?" @confirm="confirmDelete" @cancel="cancelDelete" /></template>
+
+<script>
+import ArticleForm from './components/ArticleForm.vue'
+import EditArticleForm from './components/EditArticleForm.vue'
+import ConfirmDialog from './components/ConfirmDialog.vue'
+
+export default {
+  name: 'App',
+  components: {
+    ArticleForm,
+    EditArticleForm,
+    ConfirmDialog
+  },
+  data() {
+    return {
+      showForm: false,
+      showEditForm: false,
+      showConfirmDelete: false,
+      articles: [],
+      nextId: 1,
+      isAdding: false,
+      editingArticle: null,
+      deletingArticleId: null,
+      dropdownOpen: false,
+      selectedCategory: null,
+      categories: [
+        'APPAREIL SANITAIRE',
+        'PORTE ET ACCESSOIRE',
+        'ELECTRICITE',
+        'CLIMATISEUR',
+        'PLOMBERIE',
+        'MATERIAUX DE CONSTRUCTION',
+        'ACHAT LOCAL',
+        'HABILLAGE',
+        'ELECTRO-MENAGER',
+        'MEUBLE ET ACCESSOIRE',
+        'DECORATION',
+        'PIECES DE RECHANGE'
+      ]
+    }
+  },
+  mounted() {
+    this.fetchArticles()
+  },
+  methods: {
+    async fetchArticles() {
+      try {
+        const response = await fetch('http://localhost:3001/api/articles')
+        this.articles = await response.json()
+      } catch (error) {
+        console.error('Erreur lors du chargement des articles:', error)
+      }
+    },
+    openForm() {
+      this.showForm = true
+    },
+    closeForm() {
+      this.showForm = false
+    },
+    addArticle(formData) {
+      if (this.isAdding) return
+      this.isAdding = true
+
+      const newArticle = {
+        code: formData.code,
+        designation: formData.designation,
+        marque: formData.marque,
+        unite: formData.unite,
+        stockInitial: formData.stockInitial || 0,
+        inventaire: formData.inventaire || 0,
+        entrees: 0,
+        sorties: 0,
+        stock: formData.inventaire || 0
+      }
+
+      fetch('http://localhost:3001/api/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newArticle)
+      })
+        .then(res => res.json())
+        .then(article => {
+          this.articles.push(article)
+          this.closeForm()
+        })
+        .catch(error => console.error('Erreur:', error))
+        .finally(() => {
+          setTimeout(() => {
+            this.isAdding = false
+          }, 100)
+        })
+    },
+    editArticle(id) {
+      const article = this.articles.find(a => a.id === id)
+      if (article) {
+        this.editingArticle = article
+        this.showEditForm = true
+      }
+    },
+    closeEditForm() {
+      this.showEditForm = false
+      this.editingArticle = null
+    },
+    updateArticle(updatedData) {
+      const index = this.articles.findIndex(a => a.id === this.editingArticle.id)
+      if (index !== -1) {
+        const updated = {
+          ...this.articles[index],
+          ...updatedData,
+          stock: updatedData.inventaire + (this.articles[index].entrees || 0) - (this.articles[index].sorties || 0)
+        }
+
+        fetch(`http://localhost:3001/api/articles/${this.editingArticle.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedData)
+        })
+          .then(res => res.json())
+          .then(article => {
+            this.articles[index] = article
+          })
+          .catch(error => console.error('Erreur:', error))
+      }
+      this.closeEditForm()
+    },
+    deleteArticle(id) {
+      this.deletingArticleId = id
+      this.showConfirmDelete = true
+    },
+    confirmDelete() {
+      fetch(`http://localhost:3001/api/articles/${this.deletingArticleId}`, {
+        method: 'DELETE'
+      })
+        .then(() => {
+          this.articles = this.articles.filter(a => a.id !== this.deletingArticleId)
+          this.showConfirmDelete = false
+          this.deletingArticleId = null
+        })
+        .catch(error => console.error('Erreur:', error))
+    },
+    cancelDelete() {
+      this.showConfirmDelete = false
+      this.deletingArticleId = null
+    },
+    handleMovement(id) {
+      console.log(`Mouvement pour article ${id}`)
+      // À implémenter: formulaire pour enregistrer entrées/sorties
+    },
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen
+    },
+    selectCategory(category) {
+      this.selectedCategory = category
+      this.dropdownOpen = false
+      console.log('Catégorie sélectionnée:', category)
+      // TODO: Implémenter le filtrage des articles par catégorie
+    },
+    clearCategory() {
+      this.selectedCategory = null
+      this.dropdownOpen = false
+    },
+    exportToXLS() {
+      // Créer les en-têtes
+      const headers = ['Code', 'Désignation', 'Marque', 'Unité', 'Inventaire', 'Entrées', 'Sorties', 'Stock']
+      
+      // Créer les lignes de données
+      const rows = this.articles.map(article => [
+        article.code,
+        article.designation,
+        article.marque,
+        article.unite,
+        article.inventaire,
+        article.entrees,
+        article.sorties,
+        article.stock
+      ])
+      
+      // Combiner en-têtes et données
+      const csvContent = [
+        headers.join('\t'),
+        ...rows.map(row => row.join('\t'))
+      ].join('\n')
+      
+      // Créer le blob et télécharger
+      const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(blob)
+      
+      link.setAttribute('href', url)
+      link.setAttribute('download', `inventaire_${new Date().toISOString().split('T')[0]}.xls`)
+      link.style.visibility = 'hidden'
+      
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
+  }
+}
+</script>
+
