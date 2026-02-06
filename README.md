@@ -1,14 +1,14 @@
-# 📦 Inventaire de Stock
+# Gestion de Stock
 
-Application web complète de gestion d'inventaire de stock avec backend Node.js et frontend Vue.js. Interface moderne avec export Excel intégré incluant logo et mise en forme professionnelle.
+Application web complète de gestion de stock avec backend Node.js et frontend Vue.js. Interface moderne avec export Excel intégré incluant logo et mise en forme professionnelle.
 
-## 📋 Prérequis
+## Prérequis
 
 - Node.js (version 18 ou supérieure)
 - npm (inclus avec Node.js)
 - Un navigateur web moderne (Chrome, Firefox, Edge, Safari)
 
-## 🚀 Démarrage rapide
+## Démarrage rapide
 
 **Le moyen le plus simple de démarrer l'application :**
 
@@ -26,13 +26,13 @@ chmod +x start.sh
 ```
 
 **Le script fera automatiquement :**
-1. ✅ Vérification de Node.js
-2. ✅ Installation/mise à jour des dépendances (npm install)
-3. ✅ Démarrage du backend sur http://localhost:3000
-4. ✅ Démarrage du frontend sur http://localhost:5173
-5. ✅ Ouverture automatique du navigateur
+1. Vérification de Node.js
+2. Installation/mise à jour des dépendances (npm install)
+3. Démarrage du backend sur http://localhost:3000
+4. Démarrage du frontend sur http://localhost:5173
+5. Ouverture automatique du navigateur
 
-## 📦 Installation manuelle (optionnelle)
+## Installation manuelle (optionnelle)
 
 Si c'est la première fois que vous lancez l'application, installez d'abord les dépendances :
 
@@ -48,7 +48,7 @@ cd frontend
 npm install
 ```
 
-## 🛠️ Développement
+## Développement
 
 ### Démarrer le backend uniquement
 ```bash
@@ -62,43 +62,42 @@ cd frontend
 npm run dev
 ```
 
-## 📚 Fonctionnalités principales
+## Fonctionnalités principales
 
 ### Gestion des stocks
-- ✅ **12 catégories d'articles** prédéfinies
-- ✅ **Gestion complète des désignations** (code, désignation, référence, marque, unité)
-- ✅ **Suivi détaillé des stocks** :
-  - Stock Initial (SI)
+- **12 catégories d'articles** prédéfinies
+- **Gestion complète des désignations** (code, désignation, référence, marque, unité)
+- **Suivi détaillé des stocks** :
   - Inventaire
   - Entrées
   - Sorties
-  - Stock Final (calculé automatiquement : SI + Entrées - Sorties)
+  - Stock Final (calculé automatiquement : Inventaire + Entrées - Sorties)
 
 ### Interface utilisateur
-- ✅ **Design moderne et responsive** avec Tailwind CSS
-- ✅ **Filtrage par catégorie** via dropdown
-- ✅ **Formulaires d'ajout et d'édition** intuitifs
-- ✅ **Confirmation de suppression** pour éviter les erreurs
-- ✅ **Gestion des mouvements** (entrées/sorties avec dates)
+- **Design moderne et responsive** avec Tailwind CSS
+- **Filtrage par catégorie** via dropdown
+- **Formulaires d'ajout et d'édition** intuitifs
+- **Confirmation de suppression** pour éviter les erreurs
+- **Gestion des mouvements** (entrées/sorties avec dates)
 
 ### Export Excel
-- ✅ **Export professionnel** avec logo STC
-- ✅ **Mise en forme complète** :
+- **Export professionnel** avec logo STC
+- **Mise en forme complète** :
   - En-têtes colorés (bleu, vert, orange)
   - Cellules avec couleurs de fond
   - Bordures et alignement
-- ✅ **Nom de fichier automatique** avec date
+- **Nom de fichier automatique** avec date
 
 ### Backend
-- ✅ **API REST complète** avec Express.js
-- ✅ **Stockage persistant** dans fichier JSON
-- ✅ **CORS activé** pour le développement
-- ✅ **Routes CRUD** pour articles et mouvements
+- **API REST complète** avec Express.js
+- **Stockage persistant** dans fichier JSON
+- **CORS activé** pour le développement
+- **Routes CRUD** pour articles et mouvements
 
-## 🗂️ Structure du projet
+## Structure du projet
 
 ```
-Inventaire de Stock/
+Gestion de Stock/
 ├── backend/           # Serveur API Express
 │   ├── index.js       # Point d'entrée du backend
 │   ├── data.json      # Base de données JSON
@@ -115,7 +114,7 @@ Inventaire de Stock/
 └── README.md          # Documentation
 ```
 
-## 📊 Catégories disponibles
+## Catégories disponibles
 
 - APPAREIL SANITAIRE
 - PORTE ET ACCESSOIRE
@@ -130,7 +129,7 @@ Inventaire de Stock/
 - DECORATION
 - PIECES DE RECHANGE
 
-## 🔧 Technologies utilisées
+## Technologies utilisées
 
 **Frontend:**
 - Vue 3
@@ -144,7 +143,7 @@ Inventaire de Stock/
 - CORS
 - File System (stockage JSON)
 
-## 🎨 Captures d'écran
+## Captures d'écran
 
 ### Interface principale
 - Tableau de gestion avec toutes les colonnes
@@ -156,14 +155,14 @@ Inventaire de Stock/
 - Mise en forme professionnelle avec couleurs
 - Structure identique à la maquette fournie
 
-## 🔒 Sécurité et bonnes pratiques
+## Sécurité et bonnes pratiques
 
-- ✅ Les `node_modules/` sont exclus du versionnement (`.gitignore`)
-- ✅ Les données sont stockées localement dans `backend/data.json`
-- ✅ CORS configuré pour le développement local
-- ✅ Validation des données côté backend
+- Les `node_modules/` sont exclus du versionnement (`.gitignore`)
+- Les données sont stockées localement dans `backend/data.json`
+- CORS configuré pour le développement local
+- Validation des données côté backend
 
-## 🐛 Dépannage
+## Dépannage
 
 ### Le serveur ne démarre pas
 ```bash
@@ -191,14 +190,14 @@ cd backend && npm install
 cd ../frontend && npm install
 ```
 
-## 📝 Licence
+## Licence
 
 Ce projet est développé pour la gestion interne d'inventaire.
 
-## 👥 Support
+## Support
 
 Pour toute question ou problème, veuillez créer une issue dans le repository Git.
 
 ---
 
-**Développé avec ❤️ en Vue.js et Node.js**
+**Développé avec Vue.js et Node.js**

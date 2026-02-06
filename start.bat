@@ -1,7 +1,7 @@
 @echo off
 echo ========================================
 echo   Demarrage de l'application
-echo   Inventaire de Stock
+echo   Gestion de Stock
 echo ========================================
 echo.
 

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <header class="flex items-center justify-between bg-white shadow-md p-4">
     <!-- Logo à gauche -->
     <div class="flex items-center">
@@ -7,7 +7,7 @@
     
     <!-- Titre au centre -->
     <div class="flex-1 text-center">
-      <h1 class="text-3xl font-bold text-gray-800">Inventaire de Stock</h1>
+      <h1 class="text-3xl font-bold text-gray-800">Gestion de Stock</h1>
     </div>
     
     <!-- Espace vide à droite (pour équilibre) -->
@@ -21,7 +21,7 @@
         @click="toggleDropdown" 
         class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition flex items-center gap-2"
       >
-        Article
+        Groupe d'articles
         <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': dropdownOpen }" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
         </svg>
@@ -80,7 +80,6 @@
             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Désignation</th>
             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Marque</th>
             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Unité</th>
-            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">SI</th>
             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Inventaire</th>
             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Entrées</th>
             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Sorties</th>
@@ -95,7 +94,6 @@
             <td class="px-6 py-4 text-sm text-gray-800">{{ designation.designation }}</td>
             <td class="px-6 py-4 text-sm text-gray-800">{{ designation.marque }}</td>
             <td class="px-6 py-4 text-sm text-gray-800">{{ designation.unite }}</td>
-            <td class="px-6 py-4 text-sm text-gray-800">{{ designation.stockInitial ?? designation.inventaire }}</td>
             <td class="px-6 py-4 text-sm text-gray-800">{{ designation.inventaire }}</td>
             <td class="px-6 py-4 text-sm text-green-600 font-semibold">{{ designation.entrees }}</td>
             <td class="px-6 py-4 text-sm text-red-600 font-semibold">{{ designation.sorties }}</td>
@@ -256,11 +254,10 @@ export default {
             designation: formData.designation || '',
             marque: formData.marque || '',
             unite: formData.unite || '',
-            stockInitial: isNaN(Number(formData.stockInitial)) ? 0 : Number(formData.stockInitial),
             inventaire: isNaN(inventaire) ? 0 : inventaire,
             entrees: 0,
             sorties: 0,
-            stock: isNaN(Number(formData.stockInitial)) ? 0 : Number(formData.stockInitial)
+            stock: isNaN(inventaire) ? 0 : inventaire
           })
         })
         
@@ -306,10 +303,7 @@ export default {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            ...updatedData,
-            stock: updatedData.inventaire
-          })
+          body: JSON.stringify(updatedData)
         })
         
         if (response.ok) {
@@ -416,7 +410,7 @@ export default {
       
       // Créer un nouveau classeur
       const workbook = new ExcelJS.Workbook()
-      const worksheet = workbook.addWorksheet('Inventaire')
+      const worksheet = workbook.addWorksheet('Gestion Stock')
       
       // Charger le logo
       let logoId
@@ -441,9 +435,9 @@ export default {
       }
       
       // Ligne 1 : Titre (à partir de la colonne D)
-      worksheet.mergeCells('D1:K1')
+      worksheet.mergeCells('D1:J1')
       const titleCell = worksheet.getCell('D1')
-      titleCell.value = 'INVENTAIRE DE STOCK'
+      titleCell.value = 'GESTION DE STOCK'
       titleCell.font = { bold: true, size: 14 }
       titleCell.alignment = { horizontal: 'center', vertical: 'middle' }
       titleCell.fill = {
@@ -454,15 +448,15 @@ export default {
       worksheet.getRow(1).height = 25
       
       // Ligne 3 : Article
-      worksheet.mergeCells('A3:K3')
+      worksheet.mergeCells('A3:J3')
       const articleCell = worksheet.getCell('A3')
       articleCell.value = `ARTICLE:  ${this.selectedCategory}`
       articleCell.font = { bold: true, italic: true, size: 11 }
       articleCell.alignment = { horizontal: 'center', vertical: 'middle' }
       
       // Ligne 5 : En-têtes
-      const headers = ['CODE ARTICLE', 'DESIGNATION', 'REFERENCE', 'MARQUE', 'UNITE', 'SI', 'INVENTAIRE', 'ENTRE', 'SORTIT', 'STOCK FINAL']
-      const headerColors = ['FF4472C4', 'FF4472C4', 'FF4472C4', 'FF4472C4', 'FF4472C4', 'FF70AD47', 'FF4472C4', 'FF4472C4', 'FF4472C4', 'FFF4B183']
+      const headers = ['CODE ARTICLE', 'DESIGNATION', 'REFERENCE', 'MARQUE', 'UNITE', 'INVENTAIRE', 'ENTRE', 'SORTIT', 'STOCK FINAL']
+      const headerColors = ['FF4472C4', 'FF4472C4', 'FF4472C4', 'FF4472C4', 'FF4472C4', 'FF70AD47', 'FF4472C4', 'FF4472C4', 'FFF4B183']
       const headerRow = worksheet.getRow(5)
       
       headers.forEach((header, idx) => {
@@ -495,7 +489,6 @@ export default {
           '', // REFERENCE
           designation.marque || '',
           designation.unite || '',
-          designation.stockInitial ?? designation.inventaire,
           designation.inventaire,
           designation.entrees,
           designation.sorties,
@@ -513,7 +506,7 @@ export default {
             right: { style: 'thin', color: { argb: 'FFCCCCCC' } }
           }
           
-          // Couleur de fond vert clair pour la colonne SI (F)
+          // Couleur de fond vert clair pour la colonne INVENTAIRE (F)
           if (colIdx === 5) {
             cell.fill = {
               type: 'pattern',
@@ -521,8 +514,8 @@ export default {
               fgColor: { argb: 'FFE2EFDA' }
             }
           }
-          // Couleur de fond orange clair pour la colonne STOCK FINAL (J)
-          if (colIdx === 9) {
+          // Couleur de fond orange clair pour la colonne STOCK FINAL (I)
+          if (colIdx === 8) {
             cell.fill = {
               type: 'pattern',
               pattern: 'solid',
@@ -539,7 +532,6 @@ export default {
         { width: 12 },  // REFERENCE
         { width: 15 },  // MARQUE
         { width: 10 },  // UNITE
-        { width: 8 },   // SI
         { width: 12 },  // INVENTAIRE
         { width: 10 },  // ENTRE
         { width: 10 },  // SORTIT
@@ -553,7 +545,7 @@ export default {
       const url = URL.createObjectURL(blob)
       
       link.setAttribute('href', url)
-      link.setAttribute('download', `inventaire_${this.selectedCategory}_${new Date().toISOString().split('T')[0]}.xlsx`)
+      link.setAttribute('download', `gestion_stock_${this.selectedCategory}_${new Date().toISOString().split('T')[0]}.xlsx`)
       link.style.visibility = 'hidden'
       
       document.body.appendChild(link)

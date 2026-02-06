@@ -2,7 +2,7 @@
 
 echo "========================================"
 echo "  Démarrage de l'application"
-echo "  Inventaire de Stock"
+echo "  Gestion de Stock"
 echo "========================================"
 echo ""
 

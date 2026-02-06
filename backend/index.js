@@ -119,6 +119,10 @@ app.put('/api/articles/:articleName/designations/:id', (req, res) => {
     id: parseInt(id)
   };
   
+  // Recalculer le stock final: inventaire + entrées - sorties
+  const designation = data[articleName][index];
+  designation.stock = (Number(designation.inventaire) || 0) + (Number(designation.entrees) || 0) - (Number(designation.sorties) || 0);
+  
   writeData(data);
   res.json(data[articleName][index]);
 });
@@ -180,7 +184,7 @@ app.post('/api/articles/:articleName/designations/:id/movements', (req, res) => 
     });
     d.entrees = (Number(d.entrees) || 0) + addEntrees;
     d.sorties = (Number(d.sorties) || 0) + addSorties;
-    d.stock = (Number(d.stockInitial) || 0) + d.entrees - d.sorties;
+    d.stock = (Number(d.inventaire) || 0) + d.entrees - d.sorties;
     writeData(data);
     res.json(d);
   } catch (err) {
@@ -215,7 +219,7 @@ app.put('/api/articles/:articleName/designations/:id/movements', (req, res) => {
     d.movements = normalized;
     d.entrees = normalized.reduce((s, m) => s + m.entree, 0);
     d.sorties = normalized.reduce((s, m) => s + m.sortie, 0);
-    d.stock = (Number(d.stockInitial) || 0) + d.entrees - d.sorties;
+    d.stock = (Number(d.inventaire) || 0) + d.entrees - d.sorties;
     writeData(data);
     res.json(d);
   } catch (err) {
