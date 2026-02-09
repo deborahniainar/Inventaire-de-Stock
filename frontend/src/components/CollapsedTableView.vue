@@ -1,7 +1,8 @@
 <template>
   <!-- Vue repliée : E/S + colonnes dynamiques par date + Entrés, Sortis, Action. État vide quand aucune donnée. -->
-  <div class="flex max-w-max mr-auto bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out">
-    <table class="w-auto border border-gray-200 border-r-0 rounded-l-lg overflow-hidden border-collapse">
+  <div class="flex w-full bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out">
+    <div class="flex-shrink-0 z-10 bg-white border-r border-gray-200 shadow-sm">
+      <table class="w-auto h-full border-collapse">
       <thead class="bg-gray-100 border-b border-gray-200">
         <tr>
           <th
@@ -11,12 +12,14 @@
           >
             E/S
           </th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 border-l border-gray-200">Code</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 border-l border-gray-200">Désignation</th>
         </tr>
       </thead>
       <tbody>
         <!-- État vide : aucune désignation -->
         <tr v-if="designations.length === 0" class="border-b border-gray-100">
-          <td class="px-6 py-6 text-sm text-center align-middle">
+          <td colspan="3" class="px-6 py-6 text-sm text-center align-middle">
             <button
               @click="$emit('expand')"
               class="text-blue-500 hover:text-blue-700 hover:scale-125 transition-transform text-xl"
@@ -30,7 +33,7 @@
           v-else
           v-for="designation in designations"
           :key="designation.id"
-          class="border-b hover:bg-gray-50"
+          class="border-b hover:bg-gray-50 bg-white"
         >
           <td class="px-6 py-2 text-sm text-center align-middle">
             <button
@@ -41,10 +44,14 @@
               ←
             </button>
           </td>
+          <td class="px-6 py-2 text-sm text-gray-800 border-l border-gray-100 whitespace-nowrap">{{ designation.code }}</td>
+          <td class="px-6 py-2 text-sm text-gray-800 border-l border-gray-100 whitespace-nowrap">{{ designation.designation }}</td>
         </tr>
       </tbody>
     </table>
-    <table class="w-auto border border-gray-200 rounded-r-lg overflow-hidden border-collapse">
+    </div>
+    <div class="flex-grow overflow-x-auto">
+      <table class="w-max h-full border-collapse">
       <thead class="bg-gray-100 border-b border-gray-200">
         <tr>
           <th
@@ -122,6 +129,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 </template>
 
